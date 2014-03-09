@@ -87,7 +87,7 @@ void setup_timer1(void)
 
 ISR(TIMER1_CAPT_vect)
 {
-  unsigned int timestamp, duty_cycle;
+  unsigned int timestamp;
   unsigned char aux_regB; //armazena valor do registrador de configuração B antes de inveter o bit de detecção de borda
   
   //Salva o timestamp do pulso detectado
@@ -104,14 +104,12 @@ ISR(TIMER1_CAPT_vect)
   if((aux_regB & (1 << ICES1)) == (1 << ICES1))
   {
     icp_start_time = timestamp;		    /* Start of new pulse/period */
-    //duty_cycle = icp_stop_time - icp_start_time;  /* Length of previous pulse */
-    duty_cycle = icp_start_time;
      
     if (index >= TAM)
-      nop = 0;
+      nop = 0; //Apenas para aguardar o fim do armazenamento do vector_falling
     else
     {
-      vector[index] = duty_cycle;
+      vector[index] = icp_start_time;
       index++;
     }       
   }
